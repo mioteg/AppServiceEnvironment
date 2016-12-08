@@ -1,4 +1,11 @@
 # Deploying an App Service Environment with Web/API/Function Apps
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmioteg%2FAppServiceEnvironment%2Fmaster%2Fazuredeploy.json" target="_blank">
+    <img src="http://azuredeploy.net/deploybutton.png"/>
+</a>
+<a href="http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fmioteg%2FAppServiceEnvironment%2Fmaster%2Fazuredeploy.json" target="_blank">
+    <img src="http://armviz.io/visualizebutton.png"/>
+</a>
+
 This template create an Azure Virtual Network and deploys an App Service Environment in it.
 On the App Service Environment it deploys a Web App, API App, and Function App.
 
@@ -11,6 +18,8 @@ You should pick the same location as the location of the resource group you crea
 
 An App Service Environment has four pools with compute nodes. Three worker pools doing the actual work, and a frontend pool to receive and distribute requests to the right worker pool. The worker pools can be differentiated in size, so you can ensure the right size for applications, and the ability to scale worker pools separately. To create the App Service Environment, you have to specify the size of each pool by setting an instance size and the number of instances. In this example the number of instances for worker pools 2 and 3 is set to 0, so only worker pool 1 is really active.
 To run an application, you put it in an App Service Plan and you deploy a specific App Service Plan to nodes to a specific worker pool. In this example, all apps run on the same App Service Plan, and hence in the same worker pool. The App Service Plan is configured to run on one node, whereas two are available.
+
+Deployment of an App Service Environment can take up to two hours.
 
 ## Parameters
 
