@@ -1,0 +1,448 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "type": "string",
+      "allowedValues": [
+        "Central US",
+        "East US",
+        "East US 2",
+        "North Central US",
+        "South Central US",
+        "West Central US",
+        "West US",
+        "West US 2",
+        "Canada Central",
+        "Canada East",
+        "Brazil South",
+        "Germany Central",
+        "Germany Northeast",
+        "UK West",
+        "UK South",
+        "North Europe",
+        "West Europe",
+        "Australia East",
+        "Australia Southeast",
+        "Japan East",
+        "Japan West",
+        "Central India",
+        "South India",
+        "West India",
+        "East Asia",
+        "Southeast Asia"
+      ],
+      "metadata": { "description": "The Azure region to deploy to. WARNING! Must match Resource Group location." }
+    },
+    "vnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the VNET to create."
+      }
+    },
+    "vnetAddressSpace": {
+      "type": "string",
+      "defaultValue": "10.0.0.0/16",
+      "metadata": {
+        "description": "Address space of the VNET to create."
+      }
+    },
+    "defaultSubnetName": {
+      "type": "string",
+      "defaultValue": "default",
+      "metadata": {
+        "description": "Name of the default subnet to create."
+      }
+    },
+    "defaultSubnetAddressSpace": {
+      "type": "string",
+      "defaultValue": "10.0.0.0/24",
+      "metadata": {
+        "description": "Address space of the default subnet."
+      }
+    },
+    "aseSubnetName": {
+      "type": "string",
+      "defaultValue": "aseSubnet",
+      "metadata": {
+        "description": "Name of the subnet to create for the App Service Environment."
+      }
+    },
+    "aseSubnetAddressSpace": {
+      "type": "string",
+      "defaultValue": "10.0.1.0/24",
+      "metadata": {
+        "description": "Address space of the subnet to create for the App Service Environment."
+      }
+    },
+    "ipAddressCount": {
+      "type": "int",
+      "defaultValue": 1,
+      "metadata": {
+        "description": "The number of IP Addresses to create for the environment."
+      }
+    },
+    "aseName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the App Service Environment to create."
+      }
+    },
+    "frontendSize": {
+      "type": "string",
+      "defaultValue": "Medium",
+      "allowedValues": [
+        "Medium",
+        "Large",
+        "ExtraLarge",
+        "Standard_D2",
+        "Standard_D3",
+        "Standard_D4",
+        "Standard_D1_V2",
+        "Standard_D2_V2",
+        "Standard_D3_V2",
+        "Standard_D4_V2"
+      ],
+      "metadata": {
+        "description": "Instance size to use for the Front-end Pool."
+      }
+    },
+    "frontendCount": {
+      "type": "int",
+      "defaultValue": 2,
+      "metadata": {
+        "description": "Number of instances to deploy to the Front-end Pool."
+      }
+    },
+    "workerPool1VMSize": {
+      "type": "string",
+      "defaultValue": "Medium",
+      "allowedValues": [
+        "Medium",
+        "Large",
+        "ExtraLarge",
+        "Standard_D2",
+        "Standard_D3",
+        "Standard_D4",
+        "Standard_D1_V2",
+        "Standard_D2_V2",
+        "Standard_D3_V2",
+        "Standard_D4_V2"
+      ],
+      "metadata": {
+        "description": "Instance size to use for Worker Pool 1."
+      }
+    },
+    "worker1count": {
+      "type": "int",
+      "defaultValue": 2,
+      "metadata": {
+        "description": "Number of instances to deploy to Worker Pool 1."
+      }
+    },
+    "workerPool2VMSize": {
+      "type": "string",
+      "defaultValue": "Large",
+      "allowedValues": [
+        "Medium",
+        "Large",
+        "ExtraLarge",
+        "Standard_D2",
+        "Standard_D3",
+        "Standard_D4",
+        "Standard_D1_V2",
+        "Standard_D2_V2",
+        "Standard_D3_V2",
+        "Standard_D4_V2"
+      ],
+      "metadata": {
+        "description": "Instance size to use for Worker Pool 2."
+      }
+    },
+    "worker2count": {
+      "type": "int",
+      "defaultValue": 0,
+      "metadata": {
+        "description": "Number of instances to deploy to Worker Pool 0."
+      }
+    },
+    "workerPool3VMSize": {
+      "type": "string",
+      "defaultValue": "ExtraLarge",
+      "allowedValues": [
+        "Medium",
+        "Large",
+        "ExtraLarge",
+        "Standard_D2",
+        "Standard_D3",
+        "Standard_D4",
+        "Standard_D1_V2",
+        "Standard_D2_V2",
+        "Standard_D3_V2",
+        "Standard_D4_V2"
+      ],
+      "metadata": {
+        "description": "Instance size to use for Worker Pool 3."
+      }
+    },
+    "worker3count": {
+      "type": "int",
+      "defaultValue": 0,
+      "metadata": {
+        "description": "Number of instances to deploy to Worker Pool 3."
+      }
+    },
+    "appServicePlanName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the App Service plan to create on the environment for hosting the Web App."
+      }
+    },
+    "workerPool": {
+      "type": "string",
+      "allowedValues": [
+        "1",
+        "2",
+        "3"
+      ],
+      "defaultValue": "1",
+      "metadata": {
+        "description": "Defines which worker pool's (WP1, WP2 or WP3) resources will be used for the app service plan."
+      }
+    },
+    "numberOfWorkersFromWorkerPool": {
+      "type": "int",
+      "defaultValue": 1,
+      "metadata": {
+        "description": "Defines the number of workers from the worker pool that will be used by the app service plan."
+      }
+    },
+    "siteName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the Web App to create."
+      }
+    },
+    "apiAppName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the API App to create."
+      }
+    },
+    "funcAppName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the Function App to create."
+      }
+    }
+  },
+  "variables": {
+    "vnetID": "[resourceId('Microsoft.Network/virtualNetworks',parameters('vnetName'))]",
+    "storageName": "[toLower(concat('funcAppName', uniqueString(resourceGroup().id)))]"
+  },
+  "resources": [
+    {
+      "apiVersion": "2015-08-01",
+      "name": "[parameters('siteName')]",
+      "type": "Microsoft.Web/sites",
+      "location": "[parameters('location')]",
+      "tags": {
+        "displayName": "Website"
+      },
+      "properties": {
+        "serverFarmId": "[resourceId('Microsoft.Web/serverFarms',parameters('appServicePlanName'))]",
+        "hostingEnvironmentProfile": {
+          "id": "[resourceId('Microsoft.Web/hostingEnvironments', parameters('aseName'))]"
+        }
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Web/serverFarms/', parameters('appServicePlanName'))]"
+      ]
+    },
+    {
+      "apiVersion": "2015-08-01",
+      "name": "[parameters('apiAppName')]",
+      "type": "Microsoft.Web/sites",
+      "kind": "api",
+      "location": "[parameters('location')]",
+      "tags": {
+        "displayName": "APIapp"
+      },
+      "properties": {
+        "serverFarmId": "[resourceId('Microsoft.Web/serverFarms',parameters('appServicePlanName'))]",
+        "hostingEnvironmentProfile": {
+          "id": "[resourceId('Microsoft.Web/hostingEnvironments', parameters('aseName'))]"
+        }
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Web/serverFarms/', parameters('appServicePlanName'))]"
+      ]
+    },
+    {
+      "apiVersion": "2015-08-01",
+      "name": "[parameters('funcAppName')]",
+      "type": "Microsoft.Web/sites",
+      "kind": "functionapp",
+      "location": "[parameters('location')]",
+      "tags": {
+        "displayName": "APIapp"
+      },
+      "properties": {
+        "serverFarmId": "[resourceId('Microsoft.Web/serverFarms',parameters('appServicePlanName'))]",
+        "hostingEnvironmentProfile": {
+          "id": "[resourceId('Microsoft.Web/hostingEnvironments', parameters('aseName'))]"
+        },
+        "siteConfig": {
+          "appSettings": [
+            {
+              "name": "AzureWebJobsDashboard",
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageName')), '2015-05-01-preview').key1)]"
+            },
+            {
+              "name": "AzureWebJobsStorage",
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageName')), '2015-05-01-preview').key1)]"
+            },
+            {
+              "name": "FUNCTIONS_EXTENSION_VERSION",
+              "value": "~1"
+            },
+            {
+              "name": "WEBSITE_NODE_DEFAULT_VERSION",
+              "value": "6.5.0"
+            }
+          ],
+          "alwaysOn": true
+        },
+        "clientAffinityEnabled": false
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Web/serverFarms/', parameters('appServicePlanName'))]",
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageName'))]"
+      ]
+    },
+    {
+      "apiVersion": "2015-08-01",
+      "name": "[parameters('appServicePlanName')]",
+      "type": "Microsoft.Web/serverfarms",
+      "tags": {
+        "displayName": "AppServicePlan"
+      },
+      "location": "[parameters('location')]",
+      "properties": {
+        "hostingEnvironmentProfile": {
+          "id": "[resourceId('Microsoft.Web/hostingEnvironments',parameters('aseName'))]"
+        }
+      },
+      "sku": {
+        "name": "[concat('P',parameters('workerPool'))]",
+        "tier": "Premium",
+        "size": "[concat('P',parameters('workerPool'))]",
+        "family": "P",
+        "capacity": "[parameters('numberOfWorkersFromWorkerPool')]"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Web/hostingEnvironments/', parameters('aseName'))]"
+      ]
+    },
+    {
+      "name": "[parameters('aseName')]",
+      "type": "Microsoft.Web/hostingEnvironments",
+      "tags": {
+        "displayName": "ASE"
+      },
+      "properties": {
+        "workerPools": [
+          {
+            "workerSizeId": 0,
+            "workerSize": "[parameters('workerPool1VMSize')]",
+            "workerCount": "[parameters('worker1count')]"
+          },
+          {
+            "workerSizeId": 1,
+            "workerSize": "[parameters('workerPool2VMSize')]",
+            "workerCount": "[parameters('worker2count')]"
+          },
+          {
+            "workerSizeId": 2,
+            "workerSize": "[parameters('workerPool3VMSize')]",
+            "workerCount": "[parameters('worker3count')]"
+          }
+        ],
+        "MultiSize": "[parameters('frontendSize')]",
+        "MultiRoleCount": "[parameters('frontendCount')]",
+
+        "VirtualNetwork": {
+          "Id": "[variables('vnetId')]",
+          "type": "Microsoft.Network/virtualNetworks",
+          "Subnet": "[parameters('aseSubnetName')]"
+        },
+        "ipSslAddressCount": "[parameters('ipAddressCount')]"
+      },
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[concat('Microsoft.Network/virtualNetworks/', parameters('vnetName'))]"
+      ],
+      "apiVersion": "2015-02-01"
+    },
+    {
+      "name": "[parameters('vnetName')]",
+      "type": "Microsoft.Network/virtualNetworks",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2015-06-15",
+      "dependsOn": [],
+      "tags": {
+        "displayName": "VNET"
+      },
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "[parameters('vnetAddressSpace')]"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "[parameters('defaultSubnetName')]",
+            "properties": {
+              "addressPrefix": "[parameters('defaultSubnetAddressSpace')]"
+            }
+          },
+          {
+            "name": "[parameters('aseSubnetName')]",
+            "properties": {
+              "addressPrefix": "[parameters('aseSubnetAddressSpace')]"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[variables('storageName')]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2015-06-15",
+      "dependsOn": [],
+      "tags": {
+        "displayName": "StorageAccount"
+      },
+      "properties": {
+        "accountType": "Standard_LRS"
+      },
+      "resources": [
+        {
+          "type": "Microsoft.Storage/storageAccounts/providers/locks",
+          "name": "[concat(variables('storageName'), '/Microsoft.Authorization/', variables('storageName'))]",
+          "apiVersion": "2015-01-01",
+          "dependsOn": [
+            "[concat('Microsoft.Storage/storageAccounts/', variables('storageName'))]"
+          ],
+          "properties": {
+            "level": "CannotDelete",
+            "notes": "One or more function apps were linked to this storage account. You can see all the function apps linked to the account under 'files' or 'shares'."
+          }
+        }
+      ]
+    }
+  ],
+    "outputs": {
+    }
+}
