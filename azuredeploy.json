@@ -403,7 +403,7 @@
       "resources": [
         {
           "type": "Microsoft.Storage/storageAccounts/providers/locks",
-          "name": "[concat(variables('storageName'), '/Microsoft.Authorization/parameters('functionAppName'))]",
+          "name": "[concat(variables('storageName'), '/Microsoft.Authorization/', parameters('functionAppName'))]",
           "apiVersion": "2015-01-01",
           "dependsOn": [
             "[concat('Microsoft.Storage/storageAccounts/', variables('storageName'))]"
