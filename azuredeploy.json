@@ -204,7 +204,8 @@
     "functionAppName": {
       "type": "string",
       "metadata": {
-        "description": "The name of the Function App to create. This value needs to be unique within your subscription."
+        "description": "The name of the Function App to create. This value needs to be unique within your subscription.",
+        "maxLength": 11
       }
     }
   },
@@ -402,7 +403,7 @@
       "resources": [
         {
           "type": "Microsoft.Storage/storageAccounts/providers/locks",
-          "name": "[concat(variables('storageName'), '/Microsoft.Authorization/', variables('storageName'))]",
+          "name": "[concat(variables('storageName'), '/Microsoft.Authorization/parameters('functionAppName'))]",
           "apiVersion": "2015-01-01",
           "dependsOn": [
             "[concat('Microsoft.Storage/storageAccounts/', variables('storageName'))]"
