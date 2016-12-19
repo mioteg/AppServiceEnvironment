@@ -37,14 +37,14 @@
     "vnetName": {
       "type": "string",
       "metadata": {
-        "description": "Name of the VNET to create."
+        "description": "Name of the VNET to create. This value needs to be unique within your subscription."
       }
     },
     "vnetAddressSpace": {
       "type": "string",
       "defaultValue": "10.0.0.0/16",
       "metadata": {
-        "description": "Address space of the VNET to create."
+        "description": "Address space of the VNET to create. If you intend to connect this VNET to another VNET and/or on-premises network, this address space needs to be unique."
       }
     },
     "defaultSubnetName": {
@@ -85,7 +85,7 @@
     "aseName": {
       "type": "string",
       "metadata": {
-        "description": "Name of the App Service Environment to create."
+        "description": "Name of the App Service Environment to create. This value needs to be unique."
       }
     },
     "frontendSize": {
@@ -107,7 +107,7 @@
         "description": "Number of instances to deploy to the Front-end Pool."
       }
     },
-    "workerPool1VMSize": {
+    "VmSizeWorkerPool1": {
       "type": "string",
       "defaultValue": "Medium",
       "allowedValues": [
@@ -119,14 +119,14 @@
         "description": "Instance size to use for Worker Pool 1."
       }
     },
-    "worker1count": {
+    "VmCountWorkerPool1": {
       "type": "int",
       "defaultValue": 2,
       "metadata": {
         "description": "Number of instances to deploy to Worker Pool 1."
       }
     },
-    "workerPool2VMSize": {
+    "VmSizeWorkerPool2": {
       "type": "string",
       "defaultValue": "Large",
       "allowedValues": [
@@ -138,14 +138,14 @@
         "description": "Instance size to use for Worker Pool 2."
       }
     },
-    "worker2count": {
+    "VmCountWorkerPool2": {
       "type": "int",
       "defaultValue": 0,
       "metadata": {
         "description": "Number of instances to deploy to Worker Pool 0."
       }
     },
-    "workerPool3VMSize": {
+    "VmSizeWorkerPool3": {
       "type": "string",
       "defaultValue": "ExtraLarge",
       "allowedValues": [
@@ -157,7 +157,7 @@
         "description": "Instance size to use for Worker Pool 3."
       }
     },
-    "worker3count": {
+    "VmCountWorkerPool3": {
       "type": "int",
       "defaultValue": 0,
       "metadata": {
@@ -167,10 +167,10 @@
     "appServicePlanName": {
       "type": "string",
       "metadata": {
-        "description": "The name of the App Service plan to create on the environment for hosting the Web App."
+        "description": "The name of the App Service plan to create on the environment for hosting the Web App. This value needs to be unique within your subscription."
       }
     },
-    "workerPool": {
+    "planWorkerPool": {
       "type": "string",
       "allowedValues": [
         "1",
@@ -182,40 +182,40 @@
         "description": "Defines which worker pool's (WP1, WP2 or WP3) resources will be used for the app service plan."
       }
     },
-    "numberOfWorkersFromWorkerPool": {
+    "planNumberOfWorkers": {
       "type": "int",
       "defaultValue": 1,
       "metadata": {
         "description": "Defines the number of workers from the worker pool that will be used by the app service plan."
       }
     },
-    "siteName": {
+    "websiteName": {
       "type": "string",
       "metadata": {
-        "description": "The name of the Web App to create."
+        "description": "The name of the Web App to create. This value needs to be unique within your subscription."
       }
     },
     "apiAppName": {
       "type": "string",
       "metadata": {
-        "description": "The name of the API App to create."
+        "description": "The name of the API App to create. This value needs to be unique within your subscription."
       }
     },
-    "funcAppName": {
+    "functionAppName": {
       "type": "string",
       "metadata": {
-        "description": "The name of the Function App to create."
+        "description": "The name of the Function App to create. This value needs to be unique within your subscription."
       }
     }
   },
   "variables": {
     "vnetID": "[resourceId('Microsoft.Network/virtualNetworks',parameters('vnetName'))]",
-    "storageName": "[toLower(concat('funcAppName', uniqueString(resourceGroup().id)))]"
+    "storageName": "[toLower(concat(parameters('functionAppName'), uniqueString(resourceGroup().id)))]"
   },
   "resources": [
     {
       "apiVersion": "2015-08-01",
-      "name": "[parameters('siteName')]",
+      "name": "[parameters('websiteName')]",
       "type": "Microsoft.Web/sites",
       "location": "[parameters('location')]",
       "tags": {
@@ -252,7 +252,7 @@
     },
     {
       "apiVersion": "2015-08-01",
-      "name": "[parameters('funcAppName')]",
+      "name": "[parameters('functionAppName')]",
       "type": "Microsoft.Web/sites",
       "kind": "functionapp",
       "location": "[parameters('location')]",
@@ -306,11 +306,11 @@
         }
       },
       "sku": {
-        "name": "[concat('P',parameters('workerPool'))]",
+        "name": "[concat('P',parameters('planWorkerPool'))]",
         "tier": "Premium",
-        "size": "[concat('P',parameters('workerPool'))]",
+        "size": "[concat('P',parameters('planWorkerPool'))]",
         "family": "P",
-        "capacity": "[parameters('numberOfWorkersFromWorkerPool')]"
+        "capacity": "[parameters('planNumberOfWorkers')]"
       },
       "dependsOn": [
         "[concat('Microsoft.Web/hostingEnvironments/', parameters('aseName'))]"
@@ -326,18 +326,18 @@
         "workerPools": [
           {
             "workerSizeId": 0,
-            "workerSize": "[parameters('workerPool1VMSize')]",
-            "workerCount": "[parameters('worker1count')]"
+            "workerSize": "[parameters('VmSizeWorkerPool1')]",
+            "workerCount": "[parameters('VmCountWorkerPool1')]"
           },
           {
             "workerSizeId": 1,
-            "workerSize": "[parameters('workerPool2VMSize')]",
-            "workerCount": "[parameters('worker2count')]"
+            "workerSize": "[parameters('VmSizeWorkerPool2')]",
+            "workerCount": "[parameters('VmCountWorkerPool2')]"
           },
           {
             "workerSizeId": 2,
-            "workerSize": "[parameters('workerPool3VMSize')]",
-            "workerCount": "[parameters('worker3count')]"
+            "workerSize": "[parameters('VmSizeWorkerPool3')]",
+            "workerCount": "[parameters('VmCountWorkerPool3')]"
           }
         ],
         "MultiSize": "[parameters('frontendSize')]",
